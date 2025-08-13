@@ -1,0 +1,29 @@
+<h1 class="mb-3"><%= @profile.full_name %></h1>
+<p class="mb-1"><strong>Major:</strong> <%= @profile.major %></p>
+<p class="mb-1"><strong>Year:</strong> <%= @profile.year.humanize %></p>
+<p class="mb-3"><strong>Bio:</strong> <%= @profile.bio %></p>
+<%= link_to "Edit Profile", edit_profile_path, class: "btn btn-sm btn-outline-primary mb-4" %>
+
+<h3>Your Posts</h3>
+<div class="row">
+  <% current_user.posts.order(created_at: :desc).each do |post| %>
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-body">
+          <% if post.photo.attached? %>
+            <div class="mb-2">
+              <%= image_tag post.photo.variant(resize_to_limit: [800, 800]), class: "img-fluid rounded" %>
+            </div>
+          <% end %>
+          <p class="mb-2"><%= truncate(post.body.to_s, length: 140) %></p>
+          <small class="text-muted"><%= time_ago_in_words(post.created_at) %> ago</small>
+          <div class="mt-2">
+            <%= link_to "Open", post_path(post), class: "btn btn-sm btn-link" %>
+            <%= link_to "Edit", edit_post_path(post), class: "btn btn-sm btn-link" %>
+            <%= button_to "Delete", post_path(post), method: :delete, form: { data: { turbo_confirm: "Delete post?" } }, class: "btn btn-sm btn-link text-danger" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,31 @@
+<h1 class="mb-3">Edit Profile</h1>
+<div class="col-md-8 col-lg-6">
+  <%= form_with(model: @profile, url: profile_path, method: :patch, local: true) do |f| %>
+    <div class="mb-3">
+      <%= f.label :full_name, class: "form-label" %>
+      <%= f.text_field :full_name, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :major, class: "form-label" %>
+      <%= f.select :major, Profile::MAJORS, {}, class: "form-select" %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :year, class: "form-label" %>
+      <%= f.select :year, Profile.years.keys.map { |k| [k.humanize, k] }, {}, class: "form-select" %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :bio, class: "form-label" %>
+      <%= f.text_area :bio, rows: 4, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :avatar_url, "Avatar URL", class: "form-label" %>
+      <%= f.url_field :avatar_url, class: "form-control" %>
+    </div>
+
+    <%= f.submit "Save", class: "btn btn-primary" %>
+  <% end %>
+</div>

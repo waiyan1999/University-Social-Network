@@ -1,0 +1,21 @@
+<%= form_with(model: post, local: true) do |f| %>
+  <% if post.errors.any? %>
+    <div class="alert alert-danger">
+      <strong><%= pluralize(post.errors.count, "error") %></strong> prevented saving:
+      <ul class="mb-0">
+        <% post.errors.full_messages.each { |m| %><li><%= m %></li><% } %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.text_area :body, rows: 3, class: "form-control", placeholder: "What's on your mind?" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :photo, "Add photo (optional)", class: "form-label" %>
+    <%= f.file_field :photo, class: "form-control" %>
+  </div>
+
+  <%= f.submit (post.persisted? ? "Update Post" : "Create Post"), class: "btn btn-primary" %>
+<% end %>

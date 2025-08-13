@@ -1,0 +1,69 @@
+<div class="row">
+  <% if user_signed_in? %>
+    <div class="col-md-5">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Create Post</h5>
+          <%= render "form", post: @post %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="<%= user_signed_in? ? 'col-md-7' : 'col-md-8 offset-md-2' %>">
+    <% @posts.each do |post| %>
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2">
+            <strong class="me-2">
+              <%= link_to (post.user.profile&.full_name || post.user.email), user_path(post.user) %>
+            </strong>
+            <small class="text-muted"><%= time_ago_in_words(post.created_at) %> ago</small>
+          </div>
+
+          <% if post.photo.attached? %>
+            <div class="mb-3">
+              <%= image_tag post.photo.variant(resize_to_limit: [900, 900]), class: "img-fluid rounded" %>
+            </div>
+          <% end %>
+
+          <% if post.body.present? %>
+            <p class="mb-3"><%= simple_format(post.body) %></p>
+          <% end %>
+
+          <div class="d-flex align-items-center gap-3">
+            <% if user_signed_in? %>
+              <% if post.liked_by?(current_user) %>
+                <%= button_to "Unlike (#{post.likes.count})", post_like_path(post), method: :delete, class: "btn btn-sm btn-outline-danger" %>
+              <% else %>
+                <%= button_to "Like (#{post.likes.count})", post_like_path(post), method: :post, class: "btn btn-sm btn-outline-primary" %>
+              <% end %>
+            <% else %>
+              <span class="badge bg-light text-dark">Likes: <%= post.likes.count %></span>
+            <% end %>
+
+            <span class="badge bg-light text-dark">Comments: <%= post.comments.count %></span>
+            <%= link_to "Open", post_path(post), class: "btn btn-sm btn-link" %>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <% if user_signed_in? %>
+            <%= render "comments/form", post: post, comment: Comment.new %>
+          <% end %>
+
+          <% post.comments.order(created_at: :desc).limit(3).each do |c| %>
+            <div class="mt-2">
+              <strong><%= c.user.profile&.full_name || c.user.email %>:</strong>
+              <%= c.body %>
+              <small class="text-muted">• <%= time_ago_in_words(c.created_at) %> ago</small>
+              <% if c.user == current_user %>
+                <%= button_to "Delete", post_comment_path(post, c), method: :delete, form: { data: { turbo_confirm: "Delete comment?" } }, class: "btn btn-sm btn-link text-danger" %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
